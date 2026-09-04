@@ -1,0 +1,6 @@
+{
+  "name": "Rooya - Data Labelling & Monitoring",
+  "description": "Rooya LabelMaster - AI video data labelling and fleet event monitoring platform on labelmaster.rooya.ai with real-time submission tracking, custom date-time filters, and labeller analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
