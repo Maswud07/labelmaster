@@ -97,9 +97,9 @@ export default function App() {
 
     // 6. Default / All
     const cluster = currentEvent?.cluster || 'Alibaba';
-    const fleetName = currentEvent?.motherFleet || currentEvent?.fleetName || 'Coca-Cola';
-    const subFleet = currentEvent?.motherFleet ? currentEvent.fleetName : 'Coca-Cola A';
-    const currentEventType = currentEvent?.eventType || 'Mobile uses';
+    const fleetName = currentEvent?.motherFleet || currentEvent?.fleetName || 'Tamkeen';
+    const subFleet = currentEvent?.motherFleet ? currentEvent.fleetName : '—';
+    const currentEventType = currentEvent?.eventType || 'Harsh Braking';
 
     return { cluster, fleetName, subFleet, currentEventType };
   }, [selectedFleet, currentEvent]);

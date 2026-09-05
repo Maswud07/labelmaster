@@ -24,9 +24,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onTabChange,
   onSelectTab,
   cluster = 'Alibaba',
-  fleetName = 'Coca-Cola',
-  subFleet = 'Coca-Cola A',
-  currentEventType = 'Mobile uses',
+  fleetName = 'Tamkeen',
+  subFleet = '—',
+  currentEventType = 'Harsh Braking',
   todayCount = 128,
   onOpenFleetModal
 }) => {
@@ -45,7 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     >
       {/* Top Section */}
       <div className="flex flex-col p-5">
-        {/* Logo & Platform Domain */}
+        {/* Logo */}
         <div className="flex flex-col mb-7 px-1">
           <div className="flex items-center gap-2">
             <div className="text-white font-bold text-2xl tracking-tight flex items-center gap-1.5 font-['Plus_Jakarta_Sans']">
@@ -54,12 +54,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono font-medium">
               LabelMaster
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 mt-1.5 text-xs text-slate-400 font-mono">
-            <Globe className="w-3 h-3 text-[#00a86b] shrink-0" />
-            <span className="text-slate-300 hover:text-white transition-colors select-all cursor-text text-[11px] truncate">
-              labelmaster.rooya.ai
             </span>
           </div>
         </div>
