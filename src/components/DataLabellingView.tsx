@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, BarChart2, CheckCircle2 } from 'lucide-react';
 import { EventItem, RoadOptionsState, DriverOptionsState } from '../types';
 import { EventDetailsCard } from './EventDetailsCard';
 import { VideoPlayer } from './VideoPlayer';
 import { RoadOptionsGrid, DriverOptionsGrid } from './EventOptionsGrid';
 import { FleetSelectionModal } from './FleetSelectionModal';
+import { SelectedLabelsBar } from './SelectedLabelsBar';
 
 interface DataLabellingViewProps {
   currentEvent: EventItem;
@@ -68,11 +69,29 @@ export const DataLabellingView: React.FC<DataLabellingViewProps> = ({
   todayCount,
   onOpenFleetModal
 }) => {
+  // Start with completely clean / unselected options (no labels pre-selected)
   const [roadOptions, setRoadOptions] = useState<RoadOptionsState>(defaultRoadOptions);
   const [driverOptions, setDriverOptions] = useState<DriverOptionsState>(defaultDriverOptions);
+  const [seatbeltTouched, setSeatbeltTouched] = useState<boolean>(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [isInternalFleetModalOpen, setIsInternalFleetModalOpen] = useState(false);
+
+  // Automatically reset options when switching events
+  useEffect(() => {
+    setRoadOptions(defaultRoadOptions);
+    setDriverOptions(defaultDriverOptions);
+    setSeatbeltTouched(false);
+  }, [currentEvent.id]);
+
+  const handleClearAll = () => {
+    setRoadOptions(defaultRoadOptions);
+    setDriverOptions(defaultDriverOptions);
+    setSeatbeltTouched(false);
+    setToastMessage('All selected labels cleared.');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 1500);
+  };
 
   const handleOpenFleet = () => {
     if (onOpenFleetModal) {
@@ -84,6 +103,9 @@ export const DataLabellingView: React.FC<DataLabellingViewProps> = ({
 
   const handleSubmit = () => {
     onSubmitEvent();
+    setRoadOptions(defaultRoadOptions);
+    setDriverOptions(defaultDriverOptions);
+    setSeatbeltTouched(false);
     setToastMessage('Event submitted successfully! Recorded to Labeller dashboard.');
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2500);
@@ -91,6 +113,9 @@ export const DataLabellingView: React.FC<DataLabellingViewProps> = ({
 
   const handleSkip = () => {
     onSkipEvent();
+    setRoadOptions(defaultRoadOptions);
+    setDriverOptions(defaultDriverOptions);
+    setSeatbeltTouched(false);
     setToastMessage('Event skipped. Advanced to next event.');
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2000);
@@ -179,8 +204,8 @@ export const DataLabellingView: React.FC<DataLabellingViewProps> = ({
         {/* Event Details Card */}
         <EventDetailsCard event={currentEvent} />
 
-        {/* Sticky Video Players Section (Freezes in place when scrolling, options scroll underneath) */}
-        <div className="sticky top-0 z-20 bg-[#f3f4f6] pt-2 pb-3.5 -mx-4 px-4 border-b border-slate-200/90 shadow-2xs transition-shadow">
+        {/* Sticky Video Players & Selected Labels Section (Freezes in place when scrolling, options scroll underneath) */}
+        <div className="sticky top-0 z-20 bg-[#f3f4f6] pt-2 pb-3 -mx-4 px-4 border-b border-slate-200/90 shadow-2xs transition-shadow">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
             {/* Left: Road Facing Video */}
             <div className="flex flex-col">
@@ -208,10 +233,23 @@ export const DataLabellingView: React.FC<DataLabellingViewProps> = ({
               />
             </div>
           </div>
+
+          {/* Selected Labels Cross-Checking Bar (Now sticky alongside the video players) */}
+          <div className="mt-2.5">
+            <SelectedLabelsBar
+              roadOptions={roadOptions}
+              setRoadOptions={setRoadOptions}
+              driverOptions={driverOptions}
+              setDriverOptions={setDriverOptions}
+              onClearAll={handleClearAll}
+              seatbeltTouched={seatbeltTouched}
+              setSeatbeltTouched={setSeatbeltTouched}
+            />
+          </div>
         </div>
 
-        {/* Scrollable Event Options Area (Scrolls cleanly underneath the frozen video players) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 pt-4 pb-24">
+        {/* Scrollable Event Options Area (Scrolls cleanly underneath the frozen video players and labels bar) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 pt-3 pb-24">
           {/* Left Column: Road Options & Speed */}
           <div className="flex flex-col">
             {/* Current Speed box */}
@@ -251,6 +289,7 @@ export const DataLabellingView: React.FC<DataLabellingViewProps> = ({
                 currentEventType={currentEvent.eventType}
                 cluster={currentEvent.cluster}
                 fleetName={currentEvent.fleetName || selectedFleet}
+                onSeatbeltTouch={() => setSeatbeltTouched(true)}
               />
             </div>
           </div>

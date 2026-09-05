@@ -442,7 +442,8 @@ export const DriverOptionsGrid: React.FC<{
   currentEventType?: string;
   cluster?: 'Alibaba' | 'AWS' | string;
   fleetName?: string;
-}> = ({ driverOptions, setDriverOptions, cluster, fleetName }) => {
+  onSeatbeltTouch?: () => void;
+}> = ({ driverOptions, setDriverOptions, cluster, fleetName, onSeatbeltTouch }) => {
   // Determine whether this fleet is Alibaba (RHD - Driver on Right) or AWS (LHD - Driver on Left)
   const isDriverOnRight = resolveFleetCluster(cluster, fleetName) === 'Alibaba';
 
@@ -566,7 +567,10 @@ export const DriverOptionsGrid: React.FC<{
             {/* Driver Seatbelt Violation (Right for Alibaba) */}
             <DriverSeatbeltCard
               value={driverOptions.driverSeatbelt}
-              onChange={(val) => setDriverOptions(prev => ({ ...prev, driverSeatbelt: val }))}
+              onChange={(val) => {
+                setDriverOptions(prev => ({ ...prev, driverSeatbelt: val }));
+                if (onSeatbeltTouch) onSeatbeltTouch();
+              }}
             />
           </>
         ) : (
@@ -574,7 +578,10 @@ export const DriverOptionsGrid: React.FC<{
             {/* Driver Seatbelt Violation (Left for AWS) */}
             <DriverSeatbeltCard
               value={driverOptions.driverSeatbelt}
-              onChange={(val) => setDriverOptions(prev => ({ ...prev, driverSeatbelt: val }))}
+              onChange={(val) => {
+                setDriverOptions(prev => ({ ...prev, driverSeatbelt: val }));
+                if (onSeatbeltTouch) onSeatbeltTouch();
+              }}
             />
 
             {/* Passenger Seatbelt Violation (Right for AWS) */}
