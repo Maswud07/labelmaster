@@ -84,7 +84,7 @@ export const SelectedLabelsBar: React.FC<SelectedLabelsBarProps> = ({
     selectedItems.push({
       id: 'road-stopSign',
       category: 'Stop Sign Violation',
-      value: 'Violation (Yes)',
+      value: 'Stop Sign',
       theme: 'rose',
       icon: Octagon,
       onDismiss: () => setRoadOptions(prev => ({ ...prev, stopSign: 'N/A' }))
@@ -304,8 +304,8 @@ export const SelectedLabelsBar: React.FC<SelectedLabelsBarProps> = ({
   if (seatbeltTouched) {
     selectedItems.push({
       id: 'driver-seatbelt',
-      category: 'Driver Seatbelt Violation',
-      value: driverOptions.driverSeatbelt,
+      category: 'Driver Seatbelt',
+      value: `Driver Seatbelt: ${driverOptions.driverSeatbelt}`,
       theme: driverOptions.driverSeatbelt === 'No Fastened' ? 'rose' : 'sky',
       icon: driverOptions.driverSeatbelt === 'No Fastened' ? ShieldAlert : ShieldCheck,
       onDismiss: () => {
@@ -318,8 +318,8 @@ export const SelectedLabelsBar: React.FC<SelectedLabelsBarProps> = ({
   if (driverOptions.passengerSeatbelt === 'No Fastened') {
     selectedItems.push({
       id: 'passenger-seatbelt',
-      category: 'Passenger Seatbelt Violation',
-      value: 'No Fastened',
+      category: 'Passenger Seatbelt',
+      value: 'Passenger Seatbelt: No Fastened',
       theme: 'rose',
       icon: ShieldAlert,
       onDismiss: () => setDriverOptions(prev => ({ ...prev, passengerSeatbelt: 'Fastened' }))
@@ -331,7 +331,7 @@ export const SelectedLabelsBar: React.FC<SelectedLabelsBarProps> = ({
     selectedItems.push({
       id: 'driver-uniform',
       category: 'Uniform Compliance',
-      value: 'Not wearing',
+      value: 'Uniform: Not wearing',
       theme: 'rose',
       icon: Shirt,
       onDismiss: () => setDriverOptions(prev => ({ ...prev, uniformNonCompliance: 'Wearing' }))
@@ -392,28 +392,24 @@ export const SelectedLabelsBar: React.FC<SelectedLabelsBarProps> = ({
       case 'rose':
         return {
           chip: 'bg-rose-50/90 border-rose-200 text-rose-700 hover:border-rose-300',
-          catText: 'text-rose-600',
           valText: 'text-rose-950',
           closeHover: 'hover:bg-rose-200/70 text-rose-500 hover:text-rose-800'
         };
       case 'purple':
         return {
           chip: 'bg-purple-50/90 border-purple-200 text-purple-700 hover:border-purple-300',
-          catText: 'text-purple-600',
           valText: 'text-purple-950',
           closeHover: 'hover:bg-purple-200/70 text-purple-500 hover:text-purple-800'
         };
       case 'sky':
         return {
           chip: 'bg-sky-50/90 border-sky-200 text-sky-700 hover:border-sky-300',
-          catText: 'text-sky-600',
           valText: 'text-sky-950',
           closeHover: 'hover:bg-sky-200/70 text-sky-500 hover:text-sky-800'
         };
       case 'amber':
         return {
           chip: 'bg-amber-50/90 border-amber-200 text-amber-800 hover:border-amber-300',
-          catText: 'text-amber-700',
           valText: 'text-amber-950',
           closeHover: 'hover:bg-amber-200/70 text-amber-600 hover:text-amber-900'
         };
@@ -421,7 +417,6 @@ export const SelectedLabelsBar: React.FC<SelectedLabelsBarProps> = ({
       default:
         return {
           chip: 'bg-emerald-50/90 border-emerald-200 text-emerald-800 hover:border-emerald-300',
-          catText: 'text-emerald-700',
           valText: 'text-emerald-950',
           closeHover: 'hover:bg-emerald-200/70 text-emerald-600 hover:text-emerald-900'
         };
@@ -503,9 +498,6 @@ export const SelectedLabelsBar: React.FC<SelectedLabelsBarProps> = ({
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs shadow-2xs transition-all ${themeCls.chip}`}
             >
               <IconComp className="w-3.5 h-3.5 shrink-0" />
-              <span className={`text-[11px] font-medium leading-none ${themeCls.catText}`}>
-                {item.category}:
-              </span>
               <span className={`text-xs font-bold leading-none ${themeCls.valText}`}>
                 {item.value}
               </span>
@@ -513,7 +505,7 @@ export const SelectedLabelsBar: React.FC<SelectedLabelsBarProps> = ({
                 type="button"
                 onClick={item.onDismiss}
                 className={`ml-1 p-0.5 rounded-full transition-colors cursor-pointer shrink-0 ${themeCls.closeHover}`}
-                title={`Remove ${item.category}`}
+                title={`Remove ${item.value}`}
               >
                 <X className="w-3 h-3" />
               </button>
