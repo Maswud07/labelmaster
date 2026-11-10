@@ -6,13 +6,15 @@ interface VideoPlayerProps {
   timestamp: string;
   speed: number;
   gps: string;
+  playbackSpeed?: number;
 }
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   type,
   timestamp,
   speed,
-  gps
+  gps,
+  playbackSpeed = 1
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(25); // percentage
@@ -21,12 +23,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isPlaying) {
+      const step = 1.5 * playbackSpeed;
       interval = setInterval(() => {
-        setProgress((prev) => (prev >= 100 ? 0 : prev + 1.5));
+        setProgress((prev) => (prev >= 100 ? 0 : prev + step));
       }, 200);
     }
     return () => clearInterval(interval);
-  }, [isPlaying]);
+  }, [isPlaying, playbackSpeed]);
 
   const handleDownload = () => {
     setCopiedNotification(true);
@@ -34,7 +37,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   };
 
   return (
-    <div className="relative w-full rounded-xl overflow-hidden bg-[#0a0e17] border border-slate-800 shadow-md group aspect-[16/9.5]">
+    <div className="relative w-full aspect-[16/9.5] min-h-[250px] sm:min-h-[280px] xl:min-h-[310px] rounded-xl overflow-hidden bg-[#0a0e17] border border-slate-800 shadow-md group">
       {/* Visual Canvas Representation */}
       {type === 'road' ? (
         <div className="w-full h-full relative overflow-hidden bg-gradient-to-b from-sky-400/20 via-slate-800 to-slate-950 flex items-center justify-center">
@@ -177,6 +180,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         <span>02 Sep 2026 08:30:44 • {speed.toFixed(2)} km/h • {gps}</span>
         <div className="flex items-center gap-2 text-slate-400">
           <span className="text-[10px] text-emerald-400 uppercase font-semibold">1080p 30fps</span>
+          <span className="text-[10px] text-amber-300 font-bold px-1.5 py-0.2 rounded bg-amber-500/20 border border-amber-500/30">
+            {playbackSpeed}x
+          </span>
         </div>
       </div>
     </div>

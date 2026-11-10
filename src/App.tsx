@@ -111,7 +111,21 @@ export default function App() {
   // Today count for the badge
   const todayCount = events.filter((e) => e.isoTimestamp.startsWith('2026-09-02')).length;
 
+  // History stack for 10-second Recall feature
+  const [eventHistory, setEventHistory] = useState<{
+    eventIndex: number;
+    eventId: string;
+    wasSubmitted: boolean;
+  } | null>(null);
+
   const handleSubmitEvent = () => {
+    // Record for recall capability
+    setEventHistory({
+      eventIndex: currentEventIndex,
+      eventId: currentEvent.id,
+      wasSubmitted: true
+    });
+
     const updatedEvents = [...events];
     const targetIdx = events.findIndex((e) => e.id === currentEvent.id);
     if (targetIdx !== -1) {
@@ -146,7 +160,49 @@ export default function App() {
   };
 
   const handleSkipEvent = () => {
+    // Record for recall capability
+    setEventHistory({
+      eventIndex: currentEventIndex,
+      eventId: currentEvent.id,
+      wasSubmitted: false
+    });
+
     setCurrentEventIndex((prev) => (prev + 1) % (availableEvents.length || 1));
+  };
+
+  const handleRecallEvent = (): boolean => {
+    if (!eventHistory) return false;
+
+    if (eventHistory.wasSubmitted) {
+      setEvents((prev) =>
+        prev.map((e) =>
+          e.id === eventHistory.eventId
+            ? { ...e, status: 'pending', labelledBy: undefined, labelledAt: undefined }
+            : e
+        )
+      );
+
+      setLabellers((prev) =>
+        prev.map((lab) => {
+          if (lab.email === 'abdullahalmaswud21@gmail.com') {
+            return {
+              ...lab,
+              todaySubmissions: Math.max(0, lab.todaySubmissions - 1),
+              weeklySubmissions: Math.max(0, lab.weeklySubmissions - 1),
+              monthlySubmissions: Math.max(0, lab.monthlySubmissions - 1),
+              totalSubmissions: Math.max(0, (lab.totalSubmissions || 1) - 1)
+            };
+          }
+          return lab;
+        })
+      );
+
+      setRemainingCount((prev) => prev + 1);
+    }
+
+    setCurrentEventIndex(eventHistory.eventIndex);
+    setEventHistory(null);
+    return true;
   };
 
   const handleSelectEventForLabelling = (evt: EventItem) => {
@@ -156,15 +212,54 @@ export default function App() {
     }
   };
 
-  // Sync document title and canonical URL display
+  // Sync browser URL bar to /labelmaster and manage routing
   useEffect(() => {
-    const sectionName = currentTab === 'labelling' ? 'Labelling' : currentTab === 'monitoring' ? 'Monitoring' : 'Dashboard';
-    document.title = `${sectionName} | labelmaster.rooya.ai`;
+    // Initial route check from URL path
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('monitoring')) {
+      setCurrentTab('monitoring');
+    } else if (path.includes('driver')) {
+      setCurrentTab('driverId');
+    }
+  }, []);
+
+  useEffect(() => {
+    const subRoute = currentTab === 'labelling' 
+      ? '' 
+      : `/${currentTab === 'driverId' ? 'driver-id' : currentTab}`;
+    const targetUrl = `/labelmaster${subRoute}`;
+    
+    // Explicitly update the browser address bar to show /labelmaster
+    if (window.location.pathname !== targetUrl) {
+      window.history.replaceState({ tab: currentTab }, '', targetUrl);
+    }
+
+    const titlePrefix = currentTab === 'labelling'
+      ? 'LabelMaster - Data Labelling'
+      : currentTab === 'monitoring'
+      ? 'LabelMaster - Data Monitoring'
+      : 'LabelMaster - Driver ID';
+    document.title = `${titlePrefix} | labelmaster.rooya.ai`;
   }, [currentTab]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      if (path.includes('monitoring')) {
+        setCurrentTab('monitoring');
+      } else if (path.includes('driver')) {
+        setCurrentTab('driverId');
+      } else {
+        setCurrentTab('labelling');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#f3f4f6] text-slate-800 font-sans antialiased">
-      {/* Sidebar - Matching the left navigation of the screenshot with active hierarchical card */}
+      {/* Single Unified Sidebar with Event Details */}
       <Sidebar 
         currentTab={currentTab} 
         onSelectTab={setCurrentTab}
@@ -173,11 +268,13 @@ export default function App() {
         subFleet={fleetHierarchy.subFleet}
         currentEventType={fleetHierarchy.currentEventType}
         todayCount={todayCount}
+        remainingCount={displayRemaining}
+        currentEvent={currentEvent}
         onOpenFleetModal={() => setIsFleetModalOpen(true)}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 h-screen overflow-y-auto flex flex-col">
+      <main className="flex-1 h-screen overflow-hidden flex flex-col">
         {currentTab === 'labelling' && (
           <DataLabellingView
             currentEvent={currentEvent}
@@ -188,6 +285,8 @@ export default function App() {
             events={events}
             onSubmitEvent={handleSubmitEvent}
             onSkipEvent={handleSkipEvent}
+            onRecallEvent={handleRecallEvent}
+            canRecall={!!eventHistory}
             onOpenMonitoring={() => setCurrentTab('monitoring')}
             todayCount={todayCount}
             onOpenFleetModal={() => setIsFleetModalOpen(true)}
