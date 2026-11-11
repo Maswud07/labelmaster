@@ -37,7 +37,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   };
 
   return (
-    <div className="relative w-full aspect-[16/9.5] min-h-[250px] sm:min-h-[280px] xl:min-h-[310px] rounded-xl overflow-hidden bg-[#0a0e17] border border-slate-800 shadow-md group">
+    <div className="relative w-full h-[280px] sm:h-[310px] xl:h-[340px] 2xl:h-[380px] rounded-xl overflow-hidden bg-[#0a0e17] border border-slate-800 shadow-md group">
       {/* Visual Canvas Representation */}
       {type === 'road' ? (
         <div className="w-full h-full relative overflow-hidden bg-gradient-to-b from-sky-400/20 via-slate-800 to-slate-950 flex items-center justify-center">

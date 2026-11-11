@@ -13,21 +13,42 @@ export default function App() {
   const [currentEventIndex, setCurrentEventIndex] = useState<number>(0);
   const [remainingCount, setRemainingCount] = useState<number>(9023);
   const [selectedFleet, setSelectedFleet] = useState<string>('All');
+  const [selectedEventType, setSelectedEventType] = useState<string>('All');
   const [isFleetModalOpen, setIsFleetModalOpen] = useState<boolean>(false);
 
-  // Filter available events based on selected fleet, mother fleet, or cloud provider
-  const availableEvents = events.filter((e) => {
-    if (selectedFleet === 'All') return true;
-    if (selectedFleet === 'Alibaba') return e.cluster === 'Alibaba';
-    if (selectedFleet === 'AWS') return e.cluster === 'AWS';
-    if (selectedFleet === 'Coca-Cola') {
-      return e.motherFleet === 'Coca-Cola' || e.fleetName.startsWith('Coca-Cola');
-    }
-    return e.fleetName === selectedFleet;
-  });
+  // Filter available events based on selected fleet AND selected event type
+  const availableEvents = useMemo(() => {
+    const filtered = events.filter((e) => {
+      let matchesFleet = true;
+      if (selectedFleet !== 'All') {
+        if (selectedFleet === 'Alibaba') matchesFleet = e.cluster === 'Alibaba';
+        else if (selectedFleet === 'AWS') matchesFleet = e.cluster === 'AWS';
+        else if (selectedFleet === 'Coca-Cola') {
+          matchesFleet = e.motherFleet === 'Coca-Cola' || e.fleetName.startsWith('Coca-Cola');
+        } else {
+          matchesFleet = e.fleetName === selectedFleet;
+        }
+      }
+
+      let matchesEventType = true;
+      if (selectedEventType !== 'All') {
+        matchesEventType = e.eventType.toLowerCase().includes(selectedEventType.toLowerCase()) ||
+          selectedEventType.toLowerCase().includes(e.eventType.toLowerCase());
+      }
+
+      return matchesFleet && matchesEventType;
+    });
+
+    return filtered.length > 0 ? filtered : events;
+  }, [events, selectedFleet, selectedEventType]);
 
   const handleSelectFleet = (fleet: string) => {
     setSelectedFleet(fleet);
+    setCurrentEventIndex(0);
+  };
+
+  const handleSelectEventType = (eventType: string) => {
+    setSelectedEventType(eventType);
     setCurrentEventIndex(0);
   };
 
@@ -257,8 +278,28 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  const [appToastMessage, setAppToastMessage] = useState<string | null>(null);
+
+  const handleApplyFleet = () => {
+    setAppToastMessage(`Filter active: ${selectedFleet}`);
+    setTimeout(() => setAppToastMessage(null), 1800);
+  };
+
+  const handleApplyEventType = () => {
+    setAppToastMessage(`Event filter active: ${selectedEventType === 'All' ? 'All Events' : selectedEventType}`);
+    setTimeout(() => setAppToastMessage(null), 1800);
+  };
+
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#f3f4f6] text-slate-800 font-sans antialiased">
+      {/* Toast Notification */}
+      {appToastMessage && (
+        <div className="fixed top-4 right-6 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2.5 border border-emerald-500/50 text-xs font-semibold animate-in fade-in slide-in-from-top-3">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>{appToastMessage}</span>
+        </div>
+      )}
+
       {/* Single Unified Sidebar with Event Details */}
       <Sidebar 
         currentTab={currentTab} 
@@ -271,6 +312,11 @@ export default function App() {
         remainingCount={displayRemaining}
         currentEvent={currentEvent}
         onOpenFleetModal={() => setIsFleetModalOpen(true)}
+        selectedFleet={selectedFleet}
+        onApplyFleet={handleApplyFleet}
+        selectedEventType={selectedEventType}
+        onSelectEventType={handleSelectEventType}
+        onApplyEventType={handleApplyEventType}
       />
 
       {/* Main Content Area */}
