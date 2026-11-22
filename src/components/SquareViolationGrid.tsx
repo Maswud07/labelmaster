@@ -11,7 +11,6 @@ import {
   Minimize2,
   ShieldAlert,
   Zap,
-  Gauge,
   AlertTriangle,
   UserX,
   Smartphone,
@@ -69,12 +68,12 @@ const ViolationTile: React.FC<ViolationTileProps> = ({
   const t = theme || defaultTheme;
 
   return (
-    <div className="relative group">
+    <div className="relative group h-full">
       <button
         type="button"
         onClick={onClick}
         aria-pressed={isActive}
-        className={`w-full min-h-[36px] sm:min-h-[38px] p-1 px-1.5 rounded-lg border-2 text-left flex flex-col justify-between transition-all duration-150 select-none cursor-pointer ${
+        className={`w-full h-full min-h-[36px] sm:min-h-[38px] p-1 px-1.5 rounded-lg border-2 text-left flex flex-col justify-between transition-all duration-150 select-none cursor-pointer ${
           isActive
             ? 'bg-red-600 border-red-600 text-white shadow-md ring-1 ring-red-300 scale-[1.01] z-10'
             : `${t.bg} ${t.border} ${t.hoverBorder} ${t.text} shadow-2xs hover:shadow-xs`
@@ -190,7 +189,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 w-full">
       {/* Left Column: Road Violations (Directly under Road Facing Video) */}
-      <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 shadow-2xs flex flex-col justify-between">
+      <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 shadow-2xs flex flex-col">
         {/* Speed Limit Row + Eye-Catching Highlighted False Positive Button */}
         <div className="bg-slate-50/90 border border-slate-200 rounded-lg p-1.5 mb-1.5 flex flex-col gap-1">
           <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -249,18 +248,9 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
           </div>
         </div>
 
-        {/* 4-Column Grid for Road Violations (Very light distinct category colors) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-1.5">
-          {/* 1. Collision */}
-          <ViolationTile
-            label="Collision"
-            icon={AlertOctagon}
-            isActive={isCollisionActive}
-            onClick={() => toggleRoad('collision', 'Collision')}
-            theme={roadThemes.collision}
-          />
-
-          {/* 2. Stop Sign */}
+        {/* Road Side Events: All 11 events in one uniform 4-column grid (same size for all) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+          {/* 1. Stop Sign */}
           <ViolationTile
             label="Stop Sign"
             icon={Octagon}
@@ -269,7 +259,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={roadThemes.stopSign}
           />
 
-          {/* 3. Tailgating */}
+          {/* 2. Tailgating */}
           <ViolationTile
             label="Tailgating"
             icon={Car}
@@ -278,30 +268,16 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={roadThemes.tailgating}
           />
 
-          {/* 4. Headlights Off */}
+          {/* 3. Roll over */}
           <ViolationTile
-            label="Headlights Off"
-            icon={Moon}
-            isActive={isHeadlightsOffActive}
-            onClick={() => toggleRoad('headlightsOff', 'Headlights Off')}
-            theme={roadThemes.headlightsOff}
+            label="Roll over"
+            icon={RotateCcw}
+            isActive={isRolloverActive}
+            onClick={() => toggleRoad('rollover', 'Roll over')}
+            theme={roadThemes.rollover}
           />
 
-          {/* 5. Speed Limit Tile */}
-          <ViolationTile
-            label={isSpeedActive ? `Speed: ${roadOptions.speedLimit} km/h` : 'Speed Limit'}
-            icon={Gauge}
-            isActive={isSpeedActive}
-            onClick={() => {
-              setRoadOptions(prev => ({
-                ...prev,
-                speedLimit: prev.speedLimit === 'N/A' ? '80' : 'N/A'
-              }));
-            }}
-            theme={roadThemes.speedLimit}
-          />
-
-          {/* 6. Lane Drift */}
+          {/* 4. Lane Drift */}
           <ViolationTile
             label="Lane Drift"
             icon={GitCommit}
@@ -310,16 +286,25 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={roadThemes.laneDrift}
           />
 
-          {/* 7. Roll Over */}
+          {/* 5. Collision */}
           <ViolationTile
-            label="Roll Over"
-            icon={RotateCcw}
-            isActive={isRolloverActive}
-            onClick={() => toggleRoad('rollover', 'Roll over')}
-            theme={roadThemes.rollover}
+            label="Collision"
+            icon={AlertOctagon}
+            isActive={isCollisionActive}
+            onClick={() => toggleRoad('collision', 'Collision')}
+            theme={roadThemes.collision}
           />
 
-          {/* 8. Forward Collision Warning */}
+          {/* 6. Headlights Off */}
+          <ViolationTile
+            label="Headlights Off"
+            icon={Moon}
+            isActive={isHeadlightsOffActive}
+            onClick={() => toggleRoad('headlightsOff', 'Headlights Off')}
+            theme={roadThemes.headlightsOff}
+          />
+
+          {/* 7. Forward Collision Warning */}
           <ViolationTile
             label="Forward Collision Warning"
             icon={ShieldAlert}
@@ -328,7 +313,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={roadThemes.forwardCollision}
           />
 
-          {/* 9. Near Miss */}
+          {/* 8. Near Miss */}
           <ViolationTile
             label="Near Miss"
             icon={Zap}
@@ -337,7 +322,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={roadThemes.nearMiss}
           />
 
-          {/* 10. Camera Lens Covered */}
+          {/* 9. Lens Covered */}
           <ViolationTile
             label="Lens Covered"
             icon={EyeOff}
@@ -346,7 +331,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={roadThemes.lensCovered}
           />
 
-          {/* 11. Wrong Camera Position */}
+          {/* 10. Wrong Position */}
           <ViolationTile
             label="Wrong Position"
             icon={Camera}
@@ -355,7 +340,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={roadThemes.wrongPosition}
           />
 
-          {/* 12. Partially Obstructed */}
+          {/* 11. Partially Obstructed */}
           <ViolationTile
             label="Partially Obstructed"
             icon={Minimize2}
@@ -367,7 +352,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
       </div>
 
       {/* Right Column: Driver Violations (Directly under Driver Facing Video) */}
-      <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 shadow-2xs flex flex-col justify-between">
+      <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 shadow-2xs flex flex-col">
         {/* Dedicated Single Row: Distracted Driving Group (5 events together) */}
         <div className="bg-indigo-50/45 border border-indigo-200/80 rounded-lg p-1.5 mb-1.5">
           <div className="flex items-center gap-1.5 mb-1 px-0.5">
