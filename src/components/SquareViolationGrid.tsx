@@ -191,16 +191,6 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 w-full">
       {/* Left Column: Road Violations (Directly under Road Facing Video) */}
       <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 shadow-2xs flex flex-col justify-between">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-1.5 pb-1 border-b border-slate-200">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-sky-500" />
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-800">
-              Road Violations (Click to Mark)
-            </h4>
-          </div>
-        </div>
-
         {/* Speed Limit Row + Eye-Catching Highlighted False Positive Button */}
         <div className="bg-slate-50/90 border border-slate-200 rounded-lg p-1.5 mb-1.5 flex flex-col gap-1">
           <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -378,16 +368,6 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
 
       {/* Right Column: Driver Violations (Directly under Driver Facing Video) */}
       <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 shadow-2xs flex flex-col justify-between">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-1.5 pb-1 border-b border-slate-200">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-purple-500" />
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-800">
-              Driver Violations (Click to Mark)
-            </h4>
-          </div>
-        </div>
-
         {/* Dedicated Single Row: Distracted Driving Group (5 events together) */}
         <div className="bg-indigo-50/45 border border-indigo-200/80 rounded-lg p-1.5 mb-1.5">
           <div className="flex items-center gap-1.5 mb-1 px-0.5">
