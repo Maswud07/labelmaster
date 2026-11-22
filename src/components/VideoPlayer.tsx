@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, Download, Volume2, RotateCcw } from 'lucide-react';
+import { Play, Pause, Download } from 'lucide-react';
 
 interface VideoPlayerProps {
   type: 'road' | 'driver';
@@ -11,7 +11,6 @@ interface VideoPlayerProps {
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   type,
-  timestamp,
   speed,
   gps,
   playbackSpeed = 1
@@ -36,105 +35,89 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     setTimeout(() => setCopiedNotification(false), 2000);
   };
 
+  const cabinAnimationClass = isPlaying
+    ? playbackSpeed === 2
+      ? 'animate-[cabinMotion_1.5s_ease-in-out_infinite]'
+      : playbackSpeed === 0.5
+        ? 'animate-[cabinMotion_5s_ease-in-out_infinite]'
+        : 'animate-[cabinMotion_2.8s_ease-in-out_infinite]'
+    : 'scale-[1.03]';
+
+  const roadAnimationClass = isPlaying
+    ? playbackSpeed === 2
+      ? 'animate-[roadDriveMotion_1.4s_ease-in-out_infinite]'
+      : playbackSpeed === 0.5
+        ? 'animate-[roadDriveMotion_4.8s_ease-in-out_infinite]'
+        : 'animate-[roadDriveMotion_2.6s_ease-in-out_infinite]'
+    : 'scale-[1.03]';
+
+  const sweepAnimationClass = isPlaying
+    ? playbackSpeed === 2
+      ? 'animate-[lightSweep_2.2s_linear_infinite]'
+      : playbackSpeed === 0.5
+        ? 'animate-[lightSweep_6s_linear_infinite]'
+        : 'animate-[lightSweep_3.8s_linear_infinite]'
+    : 'opacity-0';
+
   return (
     <div className="relative w-full h-[280px] sm:h-[310px] xl:h-[340px] 2xl:h-[380px] rounded-xl overflow-hidden bg-[#0a0e17] border border-slate-800 shadow-md group">
       {/* Visual Canvas Representation */}
       {type === 'road' ? (
-        <div className="w-full h-full relative overflow-hidden bg-gradient-to-b from-sky-400/20 via-slate-800 to-slate-950 flex items-center justify-center">
-          {/* Road Visual Graphics */}
-          <div className="absolute inset-0 opacity-85">
-            {/* Sky & Buildings background */}
-            <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-[#87a3bf] to-[#c7d5e2]">
-              {/* Distant skyline buildings */}
-              <div className="absolute bottom-0 inset-x-0 h-24 flex items-end justify-around opacity-40">
-                <div className="w-16 h-18 bg-amber-200/60 rounded-t-sm" />
-                <div className="w-24 h-22 bg-stone-300/80 rounded-t-sm" />
-                <div className="w-14 h-14 bg-amber-100/70 rounded-t-sm" />
-                <div className="w-28 h-20 bg-stone-200/80 rounded-t-sm" />
-                <div className="w-20 h-16 bg-amber-200/50 rounded-t-sm" />
-              </div>
-            </div>
+        /* Road Facing Dashcam Feed */
+        <div
+          onClick={() => setIsPlaying(!isPlaying)}
+          className="w-full h-full relative overflow-hidden bg-slate-950 flex items-center justify-center cursor-pointer"
+        >
+          <img
+            src="/assets/aistudio/image_5a3537e1.png"
+            alt="Road facing dashcam feed"
+            className={`w-full h-full object-cover object-center transition-transform duration-300 select-none ${roadAnimationClass}`}
+          />
 
-            {/* Road Perspective */}
-            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[#2d3748] overflow-hidden">
-              {/* Perspective Road Lines */}
-              <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                {/* Road surface */}
-                <polygon points="35,0 65,0 95,100 5,100" fill="#2b313d" />
-                {/* Road Curb left */}
-                <polygon points="33,0 35,0 5,100 2,100" fill="#cbd5e1" />
-                {/* Road Curb right */}
-                <polygon points="65,0 67,0 98,100 95,100" fill="#cbd5e1" />
-                {/* Center Dashed Lane */}
-                <line 
-                  x1="50" 
-                  y1="0" 
-                  x2="50" 
-                  y2="100" 
-                  stroke="#fbbf24" 
-                  strokeWidth="2.5" 
-                  strokeDasharray="6,8"
-                  className={isPlaying ? "animate-[dash_0.8s_linear_infinite]" : ""}
-                />
-              </svg>
-              {/* Car hood / dashboard in dashcam view */}
-              <div className="absolute -bottom-6 inset-x-12 h-14 bg-slate-900 rounded-t-3xl border-t border-slate-700 opacity-90"></div>
-            </div>
+          {/* Passing windshield light reflection when clip plays */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div
+              className={`w-1/3 h-full bg-gradient-to-r from-transparent via-white/25 to-transparent ${sweepAnimationClass}`}
+            />
           </div>
+
+          {/* Subtle wide-angle dashcam lens vignette */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_62%,rgba(0,0,0,0.42)_100%)]" />
         </div>
       ) : (
-        /* Driver Facing Visual */
-        <div className="w-full h-full relative overflow-hidden bg-slate-900 flex items-center justify-center">
-          {/* Driver Cabin Visual */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#2d3748] via-[#1a202c] to-[#0f172a] opacity-95">
-            {/* Passenger Van Window & Ceiling */}
-            <div className="absolute inset-x-4 top-2 h-1/3 bg-slate-800/80 rounded-t-lg border-b border-slate-700/60 flex items-center justify-around px-8">
-              <div className="w-12 h-10 bg-sky-200/20 rounded"></div>
-              <div className="w-12 h-10 bg-sky-200/20 rounded"></div>
-              <div className="w-12 h-10 bg-sky-200/20 rounded"></div>
-            </div>
+        /* Driver Facing Cabin Dashcam Feed */
+        <div
+          onClick={() => setIsPlaying(!isPlaying)}
+          className="w-full h-full relative overflow-hidden bg-slate-950 flex items-center justify-center cursor-pointer"
+        >
+          <img
+            src="/assets/aistudio/image_1fcb7641.png"
+            alt="Driver facing cabin camera feed"
+            className={`w-full h-full object-cover object-center transition-transform duration-300 select-none ${cabinAnimationClass}`}
+          />
 
-            {/* Driver Silhouette & Passengers representation */}
-            <div className="absolute inset-0 flex items-end justify-center pb-2">
-              {/* Driver Seat & Figure */}
-              <div className="relative flex flex-col items-center right-4 translate-y-2">
-                {/* Driver Head with sunglasses */}
-                <div className="w-16 h-18 bg-[#cca17f] rounded-full relative flex items-center justify-center shadow-lg">
-                  {/* Hair */}
-                  <div className="absolute top-0 inset-x-1 h-6 bg-stone-900 rounded-t-full"></div>
-                  {/* Sunglasses */}
-                  <div className="absolute top-7 flex gap-1 items-center">
-                    <div className="w-5 h-3 bg-black rounded-sm"></div>
-                    <div className="w-1 h-0.5 bg-black"></div>
-                    <div className="w-5 h-3 bg-black rounded-sm"></div>
-                  </div>
-                  {/* Beard */}
-                  <div className="absolute bottom-1 inset-x-3 h-5 bg-stone-900/80 rounded-b-xl"></div>
-                </div>
-                {/* Torso / Shirt */}
-                <div className="w-28 h-20 bg-sky-700 rounded-t-2xl border-t-2 border-sky-600 flex items-center justify-center text-[10px] text-sky-200 font-bold tracking-wider">
-                  TAMKEEN
-                </div>
-              </div>
-
-              {/* Passengers in background */}
-              <div className="absolute left-10 top-16 flex flex-col items-center opacity-60">
-                <div className="w-10 h-10 bg-[#e0b08a] rounded-full">
-                  <div className="w-full h-4 bg-purple-950 rounded-t-full"></div>
-                </div>
-                <div className="w-18 h-14 bg-indigo-900 rounded-t-lg"></div>
-              </div>
-            </div>
+          {/* Passing exterior light reflection when clip plays */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div
+              className={`w-1/3 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent ${sweepAnimationClass}`}
+            />
           </div>
+
+          {/* Subtle wide-angle dashcam lens vignette */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_60%,rgba(0,0,0,0.45)_100%)]" />
         </div>
       )}
 
-      {/* Center Play/Pause Button - Matches Screenshot Coral/Pink Play Circle */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      {/* Center Play/Pause Button - Auto-hides while playing for unobstructed cabin view */}
+      <div
+        className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-200 ${
+          isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'
+        }`}
+      >
         <button
           onClick={() => setIsPlaying(!isPlaying)}
           aria-label={isPlaying ? "Pause video" : "Play video"}
-          className="pointer-events-auto w-14 h-14 rounded-full bg-white/85 hover:bg-white backdrop-blur-xs flex items-center justify-center shadow-xl transition-transform transform active:scale-95 group/btn"
+          className="pointer-events-auto w-14 h-14 rounded-full bg-white/85 hover:bg-white backdrop-blur-xs flex items-center justify-center shadow-xl transition-transform transform active:scale-95 group/btn cursor-pointer"
         >
           {isPlaying ? (
             <Pause className="w-6 h-6 text-[#ff5c5c] fill-[#ff5c5c]" />

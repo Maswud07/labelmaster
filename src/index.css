@@ -1,1 +1,52 @@
 @import "tailwindcss";
+
+@keyframes cabinMotion {
+  0%, 100% {
+    transform: scale(1.035) translate3d(0px, 0px, 0px);
+    filter: brightness(1) contrast(1.02);
+  }
+  25% {
+    transform: scale(1.042) translate3d(-1.5px, 1px, 0px);
+    filter: brightness(1.03) contrast(1.03);
+  }
+  50% {
+    transform: scale(1.038) translate3d(1px, -1.5px, 0px);
+    filter: brightness(0.97) contrast(1.01);
+  }
+  75% {
+    transform: scale(1.045) translate3d(1.5px, 0.8px, 0px);
+    filter: brightness(1.02) contrast(1.03);
+  }
+}
+
+@keyframes lightSweep {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.14;
+  }
+  65% {
+    opacity: 0.06;
+  }
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes roadDriveMotion {
+  0%, 100% {
+    transform: scale(1.03) translate3d(0px, 0px, 0px);
+  }
+  25% {
+    transform: scale(1.05) translate3d(0px, 0.8px, 0px);
+  }
+  50% {
+    transform: scale(1.065) translate3d(0.6px, -0.8px, 0px);
+  }
+  75% {
+    transform: scale(1.045) translate3d(-0.6px, 0.5px, 0px);
+  }
+}
