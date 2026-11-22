@@ -74,28 +74,29 @@ const ViolationTile: React.FC<ViolationTileProps> = ({
         type="button"
         onClick={onClick}
         aria-pressed={isActive}
-        className={`w-full min-h-[44px] 2xl:min-h-[48px] p-1.5 rounded-lg border-2 text-left flex flex-col justify-between transition-all duration-150 select-none cursor-pointer ${
+        className={`w-full min-h-[36px] sm:min-h-[38px] p-1 px-1.5 rounded-lg border-2 text-left flex flex-col justify-between transition-all duration-150 select-none cursor-pointer ${
           isActive
-            ? 'bg-red-600 border-red-600 text-white shadow-md ring-2 ring-red-300 scale-[1.01] z-10'
+            ? 'bg-red-600 border-red-600 text-white shadow-md ring-1 ring-red-300 scale-[1.01] z-10'
             : `${t.bg} ${t.border} ${t.hoverBorder} ${t.text} shadow-2xs hover:shadow-xs`
         }`}
       >
         <div className="flex items-center justify-between w-full mb-0.5">
-          <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : t.icon}`} />
+          <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${isActive ? 'text-white' : t.icon}`} />
           {isActive ? (
-            <span className="w-3.5 h-3.5 rounded-full bg-white/25 flex items-center justify-center text-[9px] font-extrabold text-white shrink-0">
-              <Check className="w-2.5 h-2.5 stroke-[3]" />
+            <span className="w-3 h-3 rounded-full bg-white/25 flex items-center justify-center text-[8px] font-extrabold text-white shrink-0">
+              <Check className="w-2 h-2 stroke-[3]" />
             </span>
           ) : badge ? (
-            <span className="text-[9px] px-1 py-0.2 rounded bg-white/80 text-slate-700 font-bold border border-slate-200/80">
+            <span className="text-[8px] px-1 py-0.2 rounded bg-white/80 text-slate-700 font-bold border border-slate-200/80">
               {badge}
             </span>
           ) : null}
         </div>
         <span
-          className={`text-[11px] font-bold leading-tight block break-words ${
+          className={`text-[10px] sm:text-[10.5px] font-bold leading-tight block break-words ${
             isActive ? 'text-white font-extrabold' : t.text
           }`}
+          title={label}
         >
           {label}
         </span>
@@ -148,41 +149,6 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
   const isDriverPosActive = driverOptions.wrongCameraPosition === 'Wrong Position';
   const isDriverObstructedActive = driverOptions.cameraPartiallyObstructed === 'Partially Obstructed';
 
-  const roadActiveCount = [
-    isSpeedActive,
-    isStopSignActive,
-    isTailgatingActive,
-    isRolloverActive,
-    isLaneDriftActive,
-    isCollisionActive,
-    isHeadlightsOffActive,
-    isForwardCollisionActive,
-    isNearMissActive,
-    isRoadLensActive,
-    isRoadPosActive,
-    isRoadObstructedActive,
-    isFalsePositiveActive
-  ].filter(Boolean).length;
-
-  const driverActiveCount = [
-    isDriverSeatbeltActive,
-    isPassengerSeatbeltActive,
-    isHoldingPhoneActive,
-    isLookingPhoneActive,
-    isTalkingPhoneActive,
-    isSmokingActive,
-    isLookingDownActive,
-    isLookingAwayActive,
-    isEatingActive,
-    isDrinkingActive,
-    isObjectInHandActive,
-    isFatigueActive,
-    isNoUniformActive,
-    isDriverLensActive,
-    isDriverPosActive,
-    isDriverObstructedActive
-  ].filter(Boolean).length;
-
   // Very light color themes for Road Violations
   const roadThemes = {
     collision: { bg: 'bg-rose-50/80', border: 'border-rose-200/90', text: 'text-rose-950', icon: 'text-rose-600', hoverBorder: 'hover:border-rose-300' },
@@ -233,24 +199,13 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
               Road Violations (Click to Mark)
             </h4>
           </div>
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-            roadActiveCount > 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-500'
-          }`}>
-            {roadActiveCount} marked
-          </span>
         </div>
 
         {/* Speed Limit Row + Eye-Catching Highlighted False Positive Button */}
         <div className="bg-slate-50/90 border border-slate-200 rounded-lg p-1.5 mb-1.5 flex flex-col gap-1">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            {/* Speed Limit Label & Single Row of Speeds */}
-            <div className="flex items-center gap-1 flex-wrap flex-1">
-              <div className="flex items-center gap-1 mr-1 shrink-0">
-                <Gauge className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                  Speed:
-                </span>
-              </div>
+            {/* Speed Limit Single Row of Speeds */}
+            <div className="flex items-center gap-1.5 flex-wrap flex-1">
               {speedValues.map((spd) => {
                 const isSelected = roadOptions.speedLimit === spd;
                 return (
@@ -263,10 +218,10 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
                         speedLimit: prev.speedLimit === spd ? 'N/A' : spd
                       }));
                     }}
-                    className={`min-w-[32px] px-1.5 py-0.5 rounded text-[11px] font-bold transition-all border cursor-pointer ${
+                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-extrabold transition-all border-2 cursor-pointer shrink-0 ${
                       isSelected
-                        ? 'bg-red-600 border-red-600 text-white shadow-xs font-extrabold ring-1 ring-red-300 scale-105'
-                        : 'bg-emerald-50/80 hover:bg-emerald-100/90 text-emerald-950 border-emerald-300/80'
+                        ? 'bg-red-600 border-red-600 text-white shadow-sm ring-2 ring-red-300 scale-105'
+                        : 'bg-emerald-50/90 hover:bg-emerald-100 text-emerald-950 border-emerald-400/80 shadow-2xs'
                     }`}
                     title={`Speed Limit: ${spd} km/h`}
                   >
@@ -374,9 +329,9 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={roadThemes.rollover}
           />
 
-          {/* 8. Forward Collision Alert */}
+          {/* 8. Forward Collision Warning */}
           <ViolationTile
-            label="Forward Collision"
+            label="Forward Collision Warning"
             icon={ShieldAlert}
             isActive={isForwardCollisionActive}
             onClick={() => toggleRoad('forwardCollisionAlert', 'Forward Collision Warning')}
@@ -410,9 +365,9 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={roadThemes.wrongPosition}
           />
 
-          {/* 12. Camera Obstructed */}
+          {/* 12. Partially Obstructed */}
           <ViolationTile
-            label="Camera Obstructed"
+            label="Partially Obstructed"
             icon={Minimize2}
             isActive={isRoadObstructedActive}
             onClick={() => toggleRoad('cameraPartiallyObstructed', 'Partially Obstructed')}
@@ -431,15 +386,159 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
               Driver Violations (Click to Mark)
             </h4>
           </div>
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-            driverActiveCount > 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-500'
-          }`}>
-            {driverActiveCount} marked
-          </span>
         </div>
 
-        {/* 4-Column Grid for Driver Violations (Very light distinct category colors) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-1.5">
+        {/* Dedicated Single Row: Distracted Driving Group (5 events together) */}
+        <div className="bg-indigo-50/45 border border-indigo-200/80 rounded-lg p-1.5 mb-1.5">
+          <div className="flex items-center gap-1.5 mb-1 px-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-950">
+              Distracted Driving
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-1.5">
+            {/* 1. Looking Down */}
+            <ViolationTile
+              label="Looking Down"
+              icon={Eye}
+              isActive={isLookingDownActive}
+              onClick={() => {
+                setDriverOptions(prev => ({
+                  ...prev,
+                  distractedDriving: {
+                    ...prev.distractedDriving,
+                    lookingDown: !prev.distractedDriving.lookingDown
+                  }
+                }));
+              }}
+              theme={driverThemes.lookingDown}
+            />
+
+            {/* 2. Looking Away */}
+            <ViolationTile
+              label="Looking Away"
+              icon={EyeOff}
+              isActive={isLookingAwayActive}
+              onClick={() => {
+                setDriverOptions(prev => ({
+                  ...prev,
+                  distractedDriving: {
+                    ...prev.distractedDriving,
+                    lookingAway: !prev.distractedDriving.lookingAway
+                  }
+                }));
+              }}
+              theme={driverThemes.lookingAway}
+            />
+
+            {/* 3. Eating */}
+            <ViolationTile
+              label="Eating"
+              icon={Utensils}
+              isActive={isEatingActive}
+              onClick={() => {
+                setDriverOptions(prev => ({
+                  ...prev,
+                  distractedDriving: {
+                    ...prev.distractedDriving,
+                    eating: !prev.distractedDriving.eating
+                  }
+                }));
+              }}
+              theme={driverThemes.eating}
+            />
+
+            {/* 4. Drinking */}
+            <ViolationTile
+              label="Drinking"
+              icon={Coffee}
+              isActive={isDrinkingActive}
+              onClick={() => {
+                setDriverOptions(prev => ({
+                  ...prev,
+                  distractedDriving: {
+                    ...prev.distractedDriving,
+                    drinking: !prev.distractedDriving.drinking
+                  }
+                }));
+              }}
+              theme={driverThemes.drinking}
+            />
+
+            {/* 5. Object in Hand */}
+            <ViolationTile
+              label="Object in Hand"
+              icon={Hand}
+              isActive={isObjectInHandActive}
+              onClick={() => {
+                setDriverOptions(prev => ({
+                  ...prev,
+                  distractedDriving: {
+                    ...prev.distractedDriving,
+                    otherObjectInHand: !prev.distractedDriving.otherObjectInHand
+                  }
+                }));
+              }}
+              theme={driverThemes.objectInHand}
+            />
+          </div>
+        </div>
+
+        {/* Dedicated Single Row: Cellphone Distracted Driving Group (3 events together) */}
+        <div className="bg-emerald-50/45 border border-emerald-200/80 rounded-lg p-1.5 mb-1.5">
+          <div className="flex items-center gap-1.5 mb-1 px-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-950">
+              Cellphone Distracted Driving
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+            {/* 1. Holding Phone */}
+            <ViolationTile
+              label="Holding Phone"
+              icon={Smartphone}
+              isActive={isHoldingPhoneActive}
+              onClick={() => {
+                setDriverOptions(prev => ({
+                  ...prev,
+                  cellphoneDistracted: prev.cellphoneDistracted === 'Holding Phone' ? 'N/A' : 'Holding Phone'
+                }));
+              }}
+              theme={driverThemes.holdingPhone}
+            />
+
+            {/* 2. Looking at Phone */}
+            <ViolationTile
+              label="Looking at Phone"
+              icon={Smartphone}
+              isActive={isLookingPhoneActive}
+              onClick={() => {
+                setDriverOptions(prev => ({
+                  ...prev,
+                  cellphoneDistracted: prev.cellphoneDistracted === 'Looking at Phone' ? 'N/A' : 'Looking at Phone'
+                }));
+              }}
+              theme={driverThemes.lookingPhone}
+            />
+
+            {/* 3. Talking on Phone */}
+            <ViolationTile
+              label="Talking on Phone"
+              icon={Smartphone}
+              isActive={isTalkingPhoneActive}
+              onClick={() => {
+                setDriverOptions(prev => ({
+                  ...prev,
+                  cellphoneDistracted: prev.cellphoneDistracted === 'Talking on Phone' ? 'N/A' : 'Talking on Phone'
+                }));
+              }}
+              theme={driverThemes.talkingPhone}
+            />
+          </div>
+        </div>
+
+        {/* 4-Column Grid for Remaining Driver Violations (8 tiles = 2 clean rows of 4) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
           {/* 1. Driver Seatbelt */}
           <ViolationTile
             label="Driver Seatbelt"
@@ -468,148 +567,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={driverThemes.passengerSeatbelt}
           />
 
-          {/* 3. Holding Phone */}
-          <ViolationTile
-            label="Holding Phone"
-            icon={Smartphone}
-            isActive={isHoldingPhoneActive}
-            onClick={() => {
-              setDriverOptions(prev => ({
-                ...prev,
-                cellphoneDistracted: prev.cellphoneDistracted === 'Holding Phone' ? 'N/A' : 'Holding Phone'
-              }));
-            }}
-            theme={driverThemes.holdingPhone}
-          />
-
-          {/* 4. Looking at Phone */}
-          <ViolationTile
-            label="Looking at Phone"
-            icon={Smartphone}
-            isActive={isLookingPhoneActive}
-            onClick={() => {
-              setDriverOptions(prev => ({
-                ...prev,
-                cellphoneDistracted: prev.cellphoneDistracted === 'Looking at Phone' ? 'N/A' : 'Looking at Phone'
-              }));
-            }}
-            theme={driverThemes.lookingPhone}
-          />
-
-          {/* 5. Talking on Phone */}
-          <ViolationTile
-            label="Talking on Phone"
-            icon={Smartphone}
-            isActive={isTalkingPhoneActive}
-            onClick={() => {
-              setDriverOptions(prev => ({
-                ...prev,
-                cellphoneDistracted: prev.cellphoneDistracted === 'Talking on Phone' ? 'N/A' : 'Talking on Phone'
-              }));
-            }}
-            theme={driverThemes.talkingPhone}
-          />
-
-          {/* 6. Looking Down */}
-          <ViolationTile
-            label="Looking Down"
-            icon={Eye}
-            isActive={isLookingDownActive}
-            onClick={() => {
-              setDriverOptions(prev => ({
-                ...prev,
-                distractedDriving: {
-                  ...prev.distractedDriving,
-                  lookingDown: !prev.distractedDriving.lookingDown
-                }
-              }));
-            }}
-            theme={driverThemes.lookingDown}
-          />
-
-          {/* 7. Looking Away */}
-          <ViolationTile
-            label="Looking Away"
-            icon={EyeOff}
-            isActive={isLookingAwayActive}
-            onClick={() => {
-              setDriverOptions(prev => ({
-                ...prev,
-                distractedDriving: {
-                  ...prev.distractedDriving,
-                  lookingAway: !prev.distractedDriving.lookingAway
-                }
-              }));
-            }}
-            theme={driverThemes.lookingAway}
-          />
-
-          {/* 8. Smoking */}
-          <ViolationTile
-            label="Smoking"
-            icon={Cigarette}
-            isActive={isSmokingActive}
-            onClick={() => {
-              setDriverOptions(prev => ({
-                ...prev,
-                smokingDistracted: prev.smokingDistracted === 'Smoking' ? 'N/A' : 'Smoking'
-              }));
-            }}
-            theme={driverThemes.smoking}
-          />
-
-          {/* 9. Eating */}
-          <ViolationTile
-            label="Eating"
-            icon={Utensils}
-            isActive={isEatingActive}
-            onClick={() => {
-              setDriverOptions(prev => ({
-                ...prev,
-                distractedDriving: {
-                  ...prev.distractedDriving,
-                  eating: !prev.distractedDriving.eating
-                }
-              }));
-            }}
-            theme={driverThemes.eating}
-          />
-
-          {/* 10. Drinking */}
-          <ViolationTile
-            label="Drinking"
-            icon={Coffee}
-            isActive={isDrinkingActive}
-            onClick={() => {
-              setDriverOptions(prev => ({
-                ...prev,
-                distractedDriving: {
-                  ...prev.distractedDriving,
-                  drinking: !prev.distractedDriving.drinking
-                }
-              }));
-            }}
-            theme={driverThemes.drinking}
-          />
-
-          {/* 11. Object in Hand */}
-          <ViolationTile
-            label="Object in Hand"
-            icon={Hand}
-            isActive={isObjectInHandActive}
-            onClick={() => {
-              setDriverOptions(prev => ({
-                ...prev,
-                distractedDriving: {
-                  ...prev.distractedDriving,
-                  otherObjectInHand: !prev.distractedDriving.otherObjectInHand
-                }
-              }));
-            }}
-            theme={driverThemes.objectInHand}
-          />
-
-          {/* 12. Driver Fatigue */}
+          {/* 3. Driver Fatigue */}
           <ViolationTile
             label="Driver Fatigue"
             icon={Bed}
@@ -623,7 +581,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={driverThemes.fatigue}
           />
 
-          {/* 13. Uniform Violation */}
+          {/* 4. Uniform Violation */}
           <ViolationTile
             label="No Uniform"
             icon={Shirt}
@@ -637,7 +595,21 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={driverThemes.uniform}
           />
 
-          {/* 14. Lens Covered */}
+          {/* 5. Smoking */}
+          <ViolationTile
+            label="Smoking"
+            icon={Cigarette}
+            isActive={isSmokingActive}
+            onClick={() => {
+              setDriverOptions(prev => ({
+                ...prev,
+                smokingDistracted: prev.smokingDistracted === 'Smoking' ? 'N/A' : 'Smoking'
+              }));
+            }}
+            theme={driverThemes.smoking}
+          />
+
+          {/* 6. Lens Covered */}
           <ViolationTile
             label="Lens Covered"
             icon={EyeOff}
@@ -651,7 +623,7 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={driverThemes.lensCovered}
           />
 
-          {/* 15. Wrong Camera Position */}
+          {/* 7. Wrong Camera Position */}
           <ViolationTile
             label="Wrong Position"
             icon={Camera}
@@ -665,9 +637,9 @@ export const SquareViolationGrid: React.FC<SquareViolationGridProps> = ({
             theme={driverThemes.wrongPosition}
           />
 
-          {/* 16. Camera Obstructed */}
+          {/* 8. Partially Obstructed */}
           <ViolationTile
-            label="Camera Obstructed"
+            label="Partially Obstructed"
             icon={Minimize2}
             isActive={isDriverObstructedActive}
             onClick={() => {

@@ -179,7 +179,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       <div className="absolute inset-x-0 bottom-0 bg-black/85 text-[11px] font-mono text-slate-300 px-3 py-1 flex items-center justify-between tracking-tight">
         <span>02 Sep 2026 08:30:44 • {speed.toFixed(2)} km/h • {gps}</span>
         <div className="flex items-center gap-2 text-slate-400">
-          <span className="text-[10px] text-emerald-400 uppercase font-semibold">1080p 30fps</span>
           <span className="text-[10px] text-amber-300 font-bold px-1.5 py-0.2 rounded bg-amber-500/20 border border-amber-500/30">
             {playbackSpeed}x
           </span>
